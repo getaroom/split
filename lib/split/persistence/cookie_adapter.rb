@@ -5,6 +5,7 @@ module Split
     class CookieAdapter
 
       EXPIRES = Time.now + 31536000 # One year from now
+      DEFAULT_CONFIG = { :expires => EXPIRES }.freeze
 
       def initialize(context)
         @cookies = context.send(:cookies)
@@ -26,13 +27,19 @@ module Split
         hash.keys
       end
 
+      def self.with_config(options = {})
+        self.config.merge!(options)
+        self
+      end
+
+      def self.config
+        @config ||= DEFAULT_CONFIG.dup
+      end
+
       private
 
       def set_cookie(value)
-        @cookies[:split] = {
-          :value => JSON.generate(value),
-          :expires => EXPIRES
-        }
+        @cookies[:split] = { :value => JSON.generate(value) }.merge(self.class.config)
       end
 
       def hash

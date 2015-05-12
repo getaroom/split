@@ -35,4 +35,11 @@ describe Split::Persistence::CookieAdapter do
     expect(subject["my_key"]).to eq("my_value")
   end
 
+  describe ".with_config" do
+    it "should have extra config elements" do
+      Split::Persistence::CookieAdapter.with_config(:domain => ".foo.com")
+      expect(subject.class.config).to include({:domain => ".foo.com"})
+    end
+  end
+
 end
